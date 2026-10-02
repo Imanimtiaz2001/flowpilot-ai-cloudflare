@@ -1,0 +1,10 @@
+{
+  "name": "flowpilot-ai-cloudflare",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-10-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./dist/client", "binding": "ASSETS", "not_found_handling": "single-page-application" },
+  "ai": { "binding": "AI" },
+  "durable_objects": { "bindings": [{ "name": "FlowPilotAgent", "class_name": "FlowPilotAgent" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["FlowPilotAgent"] }]
+}
