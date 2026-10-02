@@ -83,4 +83,35 @@ npm test
 npm run build
 ```
 
-The Vitest domain suite covers schema rejection, ID normalization, task completion/reopening, progress, task edits, and invalid IDs. At preparation time, typecheck and lint passed, 3 tests passed, and build passed. The deployed preview served HTML and `/health`; the WebSocket Agent handshake returned init
+The Vitest domain suite covers schema rejection, ID normalization, task completion/reopening, progress, task edits, and invalid IDs. At preparation time, typecheck and lint passed, 3 tests passed, and build passed. The deployed preview served HTML and `/health`; the WebSocket Agent handshake returned initial durable state, but Workers AI inference failed with temporary-account error 5034, so the full AI flow did not complete. Run the exact 16-step scenario from the master prompt after login and record screenshots in `docs/screenshots/`.
+
+## Deployment
+
+```bash
+npx wrangler whoami
+npm run deploy
+```
+
+After authentication, deploy to the user-owned Cloudflare account, check `/health`, create a plan, refresh, and adjust it; then update this README and [SUBMISSION.md](SUBMISSION.md) with the stable verified URL. The public source repository is [Imanimtiaz2001/flowpilot-ai-cloudflare](https://github.com/Imanimtiaz2001/flowpilot-ai-cloudflare).
+
+## Design decisions
+
+- The SQLite Durable Object keeps each anonymous workspace's plan and tool mutations together.
+- A bounded five-step tool loop prevents an unbounded agent run; Zod validates model tool inputs and server-side task changes.
+- React renders text as text rather than injecting model HTML.
+- Replanning preserves completed tasks when their titles match exactly; this avoids silently marking different work as done.
+
+## Limitations
+
+- No user accounts or cross-device workspace recovery; browser storage holds the workspace ID.
+- Workers AI inference could not run in the temporary preview account (Cloudflare error 5034); it needs an authenticated account with model access.
+- A stable user-owned deployment, end-to-end browser run, and screenshots remain pending.
+- Large plans add prompt tokens; the workspace snapshot is capped to 15,000 characters, and model messages use pruning.
+
+## Future improvements
+
+Add account authentication, a plan version history with approval before replacement, scheduled reminders through Agent scheduling, and a Cloudflare Workflow for longer research jobs.
+
+## AI-assisted coding disclosure
+
+A concise, accurate account of the user instructions and AI-assisted work is in [PROMPT_HISTORY.md](PROMPT_HISTORY.md). The verbatim master prompt was withheld from the public repository after GitHub's automatic review blocked its publication as private user-authored text; the private project archive retains the supplied prompt. No fictional prompts or successful deployment claims have been added.
